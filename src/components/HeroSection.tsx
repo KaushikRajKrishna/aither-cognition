@@ -1,0 +1,106 @@
+import { motion } from "framer-motion";
+import { Suspense } from "react";
+import BrainScene from "./BrainScene";
+
+export default function HeroSection() {
+  return (
+    <section id="home" className="relative min-h-screen overflow-hidden pt-20">
+      {/* Grid background */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-10"
+        style={{
+          backgroundImage:
+            "linear-gradient(hsl(210 100% 56% / 0.15) 1px, transparent 1px), linear-gradient(90deg, hsl(210 100% 56% / 0.15) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      {/* Radial glow */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{
+          width: "800px",
+          height: "800px",
+          background: "radial-gradient(circle, hsl(210 100% 56% / 0.08) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="container relative mx-auto flex flex-col items-center px-4 lg:flex-row lg:gap-8">
+        {/* Text */}
+        <div className="flex-1 pt-8 text-center lg:pt-20 lg:text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <p className="mb-4 font-display text-xs font-medium uppercase tracking-[0.3em] text-primary">
+              Next-Gen Mental Health Technology
+            </p>
+            <h1 className="mb-6 font-display text-3xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl">
+              <span className="gradient-text">AI Powered</span>
+              <br />
+              <span className="text-foreground">Mental Health Platform</span>
+            </h1>
+            <p className="mx-auto mb-8 max-w-xl text-base leading-relaxed text-muted-foreground lg:mx-0 lg:text-lg">
+              A Service-Oriented Architecture platform that provides emotional support, AI counseling assistance, mood tracking, and access to professional therapists.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex flex-wrap justify-center gap-4 lg:justify-start"
+          >
+            <button className="glow-button pulse-glow font-display text-sm font-semibold tracking-wider">
+              Register Now
+            </button>
+            <button className="glow-button-outline font-display text-sm font-semibold tracking-wider">
+              Login
+            </button>
+            <button className="glow-button-outline font-display text-sm font-semibold tracking-wider">
+              Explore Platform
+            </button>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.8 }}
+            className="mt-12 flex justify-center gap-8 lg:justify-start"
+          >
+            {[
+              ["10K+", "Active Users"],
+              ["98%", "Satisfaction"],
+              ["24/7", "AI Support"],
+            ].map(([value, label]) => (
+              <div key={label} className="text-center">
+                <p className="font-display text-2xl font-bold text-primary">{value}</p>
+                <p className="text-xs text-muted-foreground">{label}</p>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* 3D Brain */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.2 }}
+          className="flex-1"
+        >
+          <Suspense
+            fallback={
+              <div className="flex h-[500px] items-center justify-center">
+                <div className="h-16 w-16 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              </div>
+            }
+          >
+            <BrainScene />
+          </Suspense>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
