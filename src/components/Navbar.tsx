@@ -3,7 +3,12 @@ import { motion } from "framer-motion";
 
 const navLinks = ["Home", "Features", "Architecture", "How It Works", "Technology", "About", "Contact"];
 
-export default function Navbar() {
+interface NavbarProps {
+  onLoginClick?: () => void;
+  onRegisterClick?: () => void;
+}
+
+export default function Navbar({ onLoginClick, onRegisterClick }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -45,8 +50,18 @@ export default function Navbar() {
 
         {/* CTA buttons */}
         <div className="hidden items-center gap-3 lg:flex">
-          <button className="glow-button-outline text-sm">Login</button>
-          <button className="glow-button pulse-glow text-sm">Register Now</button>
+          <button 
+            onClick={onLoginClick}
+            className="glow-button-outline text-sm"
+          >
+            Login
+          </button>
+          <button 
+            onClick={onRegisterClick}
+            className="glow-button pulse-glow text-sm"
+          >
+            Register Now
+          </button>
         </div>
 
         {/* Mobile menu toggle */}
@@ -79,8 +94,24 @@ export default function Navbar() {
             </a>
           ))}
           <div className="mt-4 flex gap-3">
-            <button className="glow-button-outline flex-1 text-sm">Login</button>
-            <button className="glow-button flex-1 text-sm">Register Now</button>
+            <button 
+              onClick={() => {
+                onLoginClick?.();
+                setMenuOpen(false);
+              }}
+              className="glow-button-outline flex-1 text-sm"
+            >
+              Login
+            </button>
+            <button 
+              onClick={() => {
+                onRegisterClick?.();
+                setMenuOpen(false);
+              }}
+              className="glow-button flex-1 text-sm"
+            >
+              Register Now
+            </button>
           </div>
         </motion.div>
       )}

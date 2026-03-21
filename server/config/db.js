@@ -4,8 +4,10 @@ export const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI);
     console.log(`MongoDB Connected: ${conn.connection.host}`);
+    return true;
   } catch (err) {
-    console.error("MongoDB connection error:", err.message);
-    process.exit(1);
+    console.warn("MongoDB connection error:", err.message);
+    console.warn("Continuing in development mode without database...");
+    return false;
   }
 };

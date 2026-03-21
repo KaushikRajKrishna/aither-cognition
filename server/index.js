@@ -8,7 +8,7 @@ import moodRoutes from "./routes/mood.js";
 const app = express();
 
 // Middleware
-app.use(cors({ origin: "http://localhost:8080", credentials: true }));
+app.use(cors({ origin: ["http://localhost:8080", "http://localhost:8081"], credentials: true }));
 app.use(express.json());
 
 // Routes
@@ -20,6 +20,7 @@ app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
 const PORT = process.env.PORT || 5000;
 
-connectDB().then(() => {
+(async () => {
+  await connectDB();
   app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-});
+})();
