@@ -127,6 +127,10 @@
     box-shadow: var(--glow-blue);
   }
 
+  .input-field {
+    @apply w-full bg-transparent py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none;
+  }
+
   .section-padding {
     @apply px-4 py-20 md:px-8 lg:py-28;
   }

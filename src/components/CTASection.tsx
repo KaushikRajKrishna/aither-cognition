@@ -1,6 +1,11 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 export default function CTASection() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <section className="section-padding relative overflow-hidden">
       {/* Background glow */}
@@ -35,9 +40,14 @@ export default function CTASection() {
           Join thousands who are already benefiting from AI-powered mental health support.
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <button className="glow-button pulse-glow font-display text-sm font-semibold tracking-wider">
-            Register Now
-          </button>
+          {!user && (
+            <button
+              onClick={() => navigate("/register")}
+              className="glow-button pulse-glow font-display text-sm font-semibold tracking-wider"
+            >
+              Register Now
+            </button>
+          )}
           <button className="glow-button-outline font-display text-sm font-semibold tracking-wider">
             Explore Platform
           </button>

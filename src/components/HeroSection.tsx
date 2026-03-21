@@ -1,8 +1,16 @@
 import { motion } from "framer-motion";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import BrainScene from "./BrainScene";
+import LoginModal from "./LoginModal";
+import RegisterModal from "./RegisterModal";
+import { useAuth } from "@/context/AuthContext";
 
 export default function HeroSection() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [showLogin, setShowLogin] = useState(false);
+
   return (
     <section id="home" className="relative min-h-screen overflow-hidden pt-20">
       {/* Grid background */}
@@ -52,16 +60,44 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="flex flex-wrap justify-center gap-4 lg:justify-start"
           >
-            <button className="glow-button pulse-glow font-display text-sm font-semibold tracking-wider">
-              Register Now
-            </button>
-            <button className="glow-button-outline font-display text-sm font-semibold tracking-wider">
-              Login
-            </button>
+            {user ? (
+              <>
+                <span className="flex items-center font-display text-sm text-primary">
+                  Welcome, {user.name}
+                </span>
+                <button
+                  onClick={logout}
+                  className="glow-button-outline font-display text-sm font-semibold tracking-wider"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/register")}
+                  className="glow-button pulse-glow font-display text-sm font-semibold tracking-wider"
+                >
+                  Register Now
+                </button>
+                <button
+                  onClick={() => setShowLogin(true)}
+                  className="glow-button-outline font-display text-sm font-semibold tracking-wider"
+                >
+                  Login
+                </button>
+              </>
+            )}
             <button className="glow-button-outline font-display text-sm font-semibold tracking-wider">
               Explore Platform
             </button>
           </motion.div>
+
+          <LoginModal
+            open={showLogin}
+            onClose={() => setShowLogin(false)}
+            onSwitchToRegister={() => { setShowLogin(false); navigate("/register"); }}
+          />
 
           {/* Stats */}
           <motion.div
