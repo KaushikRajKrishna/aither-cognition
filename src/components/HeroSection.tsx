@@ -1,15 +1,15 @@
 import { motion } from "framer-motion";
-import { Suspense, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Suspense } from "react";
 import BrainScene from "./BrainScene";
-import LoginModal from "./LoginModal";
-import RegisterModal from "./RegisterModal";
 import { useAuth } from "@/context/AuthContext";
 
-export default function HeroSection() {
+interface HeroProps {
+  onRegisterClick?: () => void;
+  onLoginClick?: () => void;
+}
+
+export default function HeroSection({ onRegisterClick, onLoginClick }: HeroProps) {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const [showLogin, setShowLogin] = useState(false);
 
   return (
     <section id="home" className="relative min-h-screen overflow-hidden pt-20">
@@ -75,13 +75,13 @@ export default function HeroSection() {
             ) : (
               <>
                 <button
-                  onClick={() => navigate("/register")}
+                  onClick={() => onRegisterClick?.()}
                   className="glow-button pulse-glow font-display text-sm font-semibold tracking-wider"
                 >
                   Register Now
                 </button>
                 <button
-                  onClick={() => setShowLogin(true)}
+                  onClick={() => onLoginClick?.()}
                   className="glow-button-outline font-display text-sm font-semibold tracking-wider"
                 >
                   Login
@@ -92,12 +92,6 @@ export default function HeroSection() {
               Explore Platform
             </button>
           </motion.div>
-
-          <LoginModal
-            open={showLogin}
-            onClose={() => setShowLogin(false)}
-            onSwitchToRegister={() => { setShowLogin(false); navigate("/register"); }}
-          />
 
           {/* Stats */}
           <motion.div
