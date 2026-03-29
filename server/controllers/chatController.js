@@ -1,4 +1,4 @@
-import { knowledgeBase } from "../data/knowledgeBase.js";
+﻿import { knowledgeBase } from "../data/knowledgeBase.js";
 
 // ── 1. Knowledge-base search ──────────────────────────────────────────────────
 function searchKB(query) {

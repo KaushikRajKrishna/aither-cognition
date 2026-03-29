@@ -58,6 +58,14 @@ const userSchema = new mongoose.Schema(
         date: { type: Date, default: Date.now },
       },
     ],
+    // Enhanced mood tracking fields
+    totalMoodEntries: {
+      type: Number,
+      default: 0,
+    },
+    lastMoodEntry: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

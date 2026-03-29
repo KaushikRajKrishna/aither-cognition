@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/auth.js";
 import moodRoutes from "./routes/mood.js";
+import moodAdminRoutes from "./routes/moodAdmin.js";
 import chatRoutes from "./routes/chat.js";
 import doctorRoutes from "./routes/doctor.js";
 import appointmentRoutes from "./routes/appointment.js";
@@ -18,6 +19,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/mood", moodRoutes);
+app.use("/api/mood-admin", moodAdminRoutes);
 app.use("/api/chat", chatRoutes);
 // GET /api/doctor registered directly — Express 5 subrouters don't match empty
 // suffix paths reliably, so the list route lives here instead of the subrouter
