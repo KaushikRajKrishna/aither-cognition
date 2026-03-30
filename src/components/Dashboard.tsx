@@ -228,17 +228,7 @@ function UserHome({
           </button>
         </div>
 
-        {/* Mood Tracking Card */}
-        <div className="glass-card border border-glass-border rounded-lg p-6 hover:border-primary transition-colors cursor-pointer">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="h-6 w-6 text-primary">📊</div>
-            <h2 className="font-display text-xl font-bold">Mood Tracking</h2>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Track your mood patterns and get insights into your emotional well-being over time.
-          </p>
-          <button className="mt-4 glow-button text-sm">View Moods</button>
-        </div>
+        
       </div>
     </motion.div>
   );
