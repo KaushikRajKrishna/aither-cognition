@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
-import { Suspense } from "react";
-import BrainScene from "./BrainScene";
 import { useAuth } from "@/context/AuthContext";
+import heroVideo from "@/images/Animation_with_rotations_202603292146.mp4";
 
 interface HeroProps {
   onRegisterClick?: () => void;
@@ -113,22 +112,21 @@ export default function HeroSection({ onRegisterClick, onLoginClick }: HeroProps
           </motion.div>
         </div>
 
-        {/* 3D Brain */}
+        {/* Hero Video */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="flex-1"
+          className="flex-1 overflow-hidden"
         >
-          <Suspense
-            fallback={
-              <div className="flex h-[500px] items-center justify-center">
-                <div className="h-16 w-16 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              </div>
-            }
-          >
-            <BrainScene />
-          </Suspense>
+          <video
+            src={heroVideo}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="h-[320px] w-[125%] -translate-x-[5%] object-cover object-center md:h-[380px] lg:h-[440px]"
+          />
         </motion.div>
       </div>
     </section>

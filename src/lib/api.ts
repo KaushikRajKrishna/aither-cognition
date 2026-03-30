@@ -152,6 +152,22 @@ export const appointmentApi = {
     request<{ appointment: Appointment }>(`/appointment/${id}`, { method: "DELETE" }),
 };
 
+export const notificationApi = {
+  getVapidKey: () => request<{ publicKey: string }>("/notifications/vapid-public-key"),
+
+  subscribe: (subscription: PushSubscriptionJSON) =>
+    request<{ message: string }>("/notifications/subscribe", {
+      method: "POST",
+      body: JSON.stringify({ subscription }),
+    }),
+
+  unsubscribe: (endpoint: string) =>
+    request<{ message: string }>("/notifications/subscribe", {
+      method: "DELETE",
+      body: JSON.stringify({ endpoint }),
+    }),
+};
+
 export const authApi = {
   register: (
     name: string, email: string, password: string,

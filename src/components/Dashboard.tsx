@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Menu, LogOut, Home, MessageCircle, CalendarPlus, Clock, Users, Stethoscope, Heart } from "lucide-react";
+import NotificationBell from "@/components/NotificationBell";
 import { motion, AnimatePresence } from "framer-motion";
 import ChatBot from "@/components/ChatBot";
 import BookAppointment from "@/components/BookAppointment";
@@ -124,6 +125,7 @@ export default function Dashboard() {
               <Menu className="h-5 w-5" />
             </button>
             <div className="flex-1" />
+            <NotificationBell />
             <div className="text-sm text-muted-foreground">
               Welcome, <span className="font-semibold text-foreground">{user?.name}</span>
               {isDoctor && (

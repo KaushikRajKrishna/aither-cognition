@@ -1,5 +1,6 @@
 import Appointment from "../models/Appointment.js";
 import Doctor from "../models/Doctor.js";
+import NotificationService from "../services/notificationService.js";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -86,6 +87,15 @@ export const bookAppointment = async (req, res) => {
       { path: "doctorId", select: "name hospitalName expertise consultationMode" },
       { path: "userId", select: "name email" },
     ]);
+
+    // Send booking confirmation notification
+    const doctorName = populated.doctorId?.name || "your doctor";
+    NotificationService.sendToUser(req.user._id, {
+      title: "Appointment Booked",
+      body: `Your appointment with Dr. ${doctorName} on ${dayStart.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })} is confirmed.`,
+      icon: "/favicon.ico",
+      tag: "appointment-booked",
+    }).catch((err) => console.error("Push notification failed:", err.message));
 
     res.status(201).json({ appointment: populated });
   } catch (err) {

@@ -4,6 +4,7 @@ import MoodEntry from "../models/MoodEntry.js";
 import Alert from "../models/Alert.js";
 import Event from "../models/Event.js";
 import User from "../models/User.js";
+import NotificationService from "./notificationService.js";
 
 const sentiment = new Sentiment();
 
@@ -427,6 +428,12 @@ class MoodService {
       });
 
       await alert.save();
+
+      // Send push notification for the new alert
+      NotificationService.sendMoodAlert(userId, alertType, message).catch((err) =>
+        console.error("Push notification failed:", err.message)
+      );
+
       return alert;
     } catch (error) {
       console.error("Error creating alert:", error);
