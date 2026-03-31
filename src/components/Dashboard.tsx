@@ -17,8 +17,9 @@ import ChatBot from "@/components/ChatBot";
 import BookAppointment from "@/components/BookAppointment";
 import DoctorDashboard from "@/components/DoctorDashboard";
 import MoodTracker from "@/components/MoodTracker";
+import RoutineScheduler from "@/components/RoutineScheduler";
 
-type UserView = "home" | "chatbot" | "book-appointment" | "mood-tracker";
+type UserView = "home" | "chatbot" | "book-appointment" | "mood-tracker" | "routine-scheduler";
 type DoctorView = "doctor-home" | "availability" | "appointments";
 type ActiveView = UserView | DoctorView;
 
@@ -36,6 +37,7 @@ export default function Dashboard() {
   const userMenu = [
     { icon: Home, label: "Home", view: "home" as UserView },
     { icon: Heart, label: "Mood Tracker", view: "mood-tracker" as UserView },
+    { icon: Clock, label: "Routine Scheduler", view: "routine-scheduler" as UserView },
     { icon: MessageCircle, label: "ChatBot", view: "chatbot" as UserView },
     { icon: CalendarPlus, label: "Book Appointment", view: "book-appointment" as UserView },
   ];
@@ -147,8 +149,9 @@ export default function Dashboard() {
                 transition={{ duration: 0.15 }}
               >
                 {/* ── USER VIEWS ── */}
-                {!isDoctor && activeView === "home" && <UserHome onStartChat={() => setChatOpen(true)} onBookAppointment={() => setActiveView("book-appointment")} onMoodTracker={() => setActiveView("mood-tracker")} />}
+                {!isDoctor && activeView === "home" && <UserHome onStartChat={() => setChatOpen(true)} onBookAppointment={() => setActiveView("book-appointment")} onMoodTracker={() => setActiveView("mood-tracker")} onRoutineScheduler={() => setActiveView("routine-scheduler")} />}
                 {!isDoctor && activeView === "mood-tracker" && <MoodTracker />}
+                {!isDoctor && activeView === "routine-scheduler" && <RoutineScheduler />}
                 {!isDoctor && activeView === "book-appointment" && <BookAppointment />}
 
                 {/* ── DOCTOR VIEWS ── */}
@@ -171,8 +174,8 @@ export default function Dashboard() {
 
 // ── User Home ──────────────────────────────────────────────────────────────────
 function UserHome({
-  onStartChat, onBookAppointment, onMoodTracker,
-}: { onStartChat: () => void; onBookAppointment: () => void; onMoodTracker: () => void }) {
+  onStartChat, onBookAppointment, onMoodTracker, onRoutineScheduler,
+}: { onStartChat: () => void; onBookAppointment: () => void; onMoodTracker: () => void; onRoutineScheduler: () => void }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -182,7 +185,7 @@ function UserHome({
       <h1 className="font-display text-3xl font-bold mb-2">Welcome to Aither Cognition</h1>
       <p className="text-muted-foreground mb-6">Mental health support powered by AI</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Mood Tracker Card */}
         <div className="glass-card border border-glass-border rounded-lg p-6 hover:border-pink-500/50 transition-colors cursor-pointer">
           <div className="flex items-center gap-3 mb-3">
@@ -194,6 +197,20 @@ function UserHome({
           </p>
           <button onClick={onMoodTracker} className="mt-4 glow-button text-sm">
             Track Mood
+          </button>
+        </div>
+
+        {/* Routine Scheduler Card */}
+        <div className="glass-card border border-glass-border rounded-lg p-6 hover:border-indigo-500/50 transition-colors cursor-pointer">
+          <div className="flex items-center gap-3 mb-3">
+            <Clock className="h-6 w-6 text-indigo-500" />
+            <h2 className="font-display text-xl font-bold">Routine Scheduler</h2>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Set reminders for work, medication, exercise, and sleep with customizable notification times.
+          </p>
+          <button onClick={onRoutineScheduler} className="mt-4 glow-button text-sm">
+            Manage Routine
           </button>
         </div>
 
