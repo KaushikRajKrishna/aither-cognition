@@ -1,5 +1,11 @@
 import webpush from "web-push";
 import PushSubscription from "../models/PushSubscription.js";
+import User from "../models/User.js";
+import {
+  sendAppointmentReminderEmail,
+  sendMoodAlertEmail,
+  sendRoutineReminderEmail,
+} from "./emailService.js";
 
 let vapidConfigured = false;
 function ensureVapid() {
@@ -82,6 +88,14 @@ class NotificationService {
       tag: "appointment-reminder",
       requireInteraction: true,
     });
+
+    // Also send email
+    User.findById(userId).select("email name").lean().then((user) => {
+      if (!user?.email) return;
+      sendAppointmentReminderEmail(user.email, user.name, doctorName, dateStr).catch((err) =>
+        console.error("[email] Appointment reminder failed:", err.message)
+      );
+    }).catch(() => {});
   }
 
   /**
@@ -97,6 +111,36 @@ class NotificationService {
       tag: alertType.toLowerCase(),
       requireInteraction: true,
     });
+
+    // Also send email
+    User.findById(userId).select("email name").lean().then((user) => {
+      if (!user?.email) return;
+      sendMoodAlertEmail(user.email, user.name, alertType, message).catch((err) =>
+        console.error("[email] Mood alert email failed:", err.message)
+      );
+    }).catch(() => {});
+  }
+
+  /**
+   * Send a routine reminder push + email to a user.
+   */
+  static async sendRoutineReminder(userId, taskTitle, taskType) {
+    const body = `Time for ${taskType === "custom" ? taskTitle || "your task" : taskType}!`;
+    await this.sendToUser(userId, {
+      title: "Routine Reminder",
+      body,
+      icon: "/favicon.ico",
+      tag: `routine-${taskTitle}`,
+      requireInteraction: false,
+    });
+
+    // Also send email
+    User.findById(userId).select("email name").lean().then((user) => {
+      if (!user?.email) return;
+      sendRoutineReminderEmail(user.email, user.name, taskTitle, taskType).catch((err) =>
+        console.error("[email] Routine reminder email failed:", err.message)
+      );
+    }).catch(() => {});
   }
 }
 

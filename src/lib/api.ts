@@ -168,6 +168,30 @@ export const notificationApi = {
     }),
 };
 
+export interface RoutineTask {
+  taskId: string;
+  title: string;
+  type: "work" | "medication" | "exercise" | "sleep" | "custom";
+  time: string;
+  enabled: boolean;
+}
+
+export const routineApi = {
+  list: () => request<{ routines: RoutineTask[] }>("/routine"),
+
+  add: (task: Omit<RoutineTask, "enabled">) =>
+    request<{ routine: RoutineTask }>("/routine", {
+      method: "POST",
+      body: JSON.stringify(task),
+    }),
+
+  toggle: (taskId: string) =>
+    request<{ routine: RoutineTask }>(`/routine/${taskId}/toggle`, { method: "PATCH" }),
+
+  remove: (taskId: string) =>
+    request<{ message: string }>(`/routine/${taskId}`, { method: "DELETE" }),
+};
+
 export const authApi = {
   register: (
     name: string, email: string, password: string,
