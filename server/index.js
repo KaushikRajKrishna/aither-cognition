@@ -10,9 +10,11 @@ import chatRoutes from "./routes/chat.js";
 import doctorRoutes from "./routes/doctor.js";
 import appointmentRoutes from "./routes/appointment.js";
 import notificationRoutes from "./routes/notification.js";
+import routineRoutes from "./routes/routine.js";
 import { getAllDoctors } from "./controllers/doctorController.js";
 import Appointment from "./models/Appointment.js";
 import Alert from "./models/Alert.js";
+import Routine from "./models/Routine.js";
 import NotificationService from "./services/notificationService.js";
 
 const app = express();
@@ -32,6 +34,7 @@ app.get("/api/doctor", getAllDoctors);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/appointment", appointmentRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/routine", routineRoutes);
 
 // Health check
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
@@ -54,6 +57,29 @@ const PORT = process.env.PORT || 5000;
       }
     } catch (err) {
       console.error("[cron] Active alert re-notify error:", err.message);
+    }
+  });
+
+  // Every minute — send push + email for due routine tasks
+  cron.schedule("* * * * *", async () => {
+    try {
+      const now = new Date();
+      const HHmm = now.toTimeString().slice(0, 5);
+      const todayStr = now.toDateString();
+
+      const dueRoutines = await Routine.find({ enabled: true, time: HHmm });
+      for (const routine of dueRoutines) {
+        const notifiedToday =
+          routine.lastNotifiedDate &&
+          new Date(routine.lastNotifiedDate).toDateString() === todayStr;
+        if (notifiedToday) continue;
+
+        await NotificationService.sendRoutineReminder(routine.userId, routine.title, routine.type);
+        routine.lastNotifiedDate = now;
+        await routine.save();
+      }
+    } catch (err) {
+      console.error("[cron] Routine reminder error:", err.message);
     }
   });
 
