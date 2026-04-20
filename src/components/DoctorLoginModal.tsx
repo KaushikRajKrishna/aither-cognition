@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function DoctorLoginModal({ open, onClose, onBack, onSwitchToRegister }: Props) {
-  const { login } = useAuth();
+  const { doctorLogin } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -27,7 +27,7 @@ export default function DoctorLoginModal({ open, onClose, onBack, onSwitchToRegi
     setError("");
     setLoading(true);
     try {
-      await login(email, password);
+      await doctorLogin(email, password);
       onClose();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");

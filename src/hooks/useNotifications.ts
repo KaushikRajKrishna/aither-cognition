@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 const API_BASE = "/api";
 
 function getToken() {
-  return localStorage.getItem("token");
+  return sessionStorage.getItem("token");
 }
 
 async function authFetch(path: string, options: RequestInit = {}) {

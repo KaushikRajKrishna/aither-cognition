@@ -6,11 +6,13 @@ import {
   updateAvailability,
   updateLeaves,
 } from "../controllers/doctorController.js";
+import { doctorLogin } from "../controllers/authController.js";
 import { protectDoctor } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.post("/register", registerDoctor);
+router.post("/login", doctorLogin);
 // named PUT routes MUST come before /:id wildcard
 router.put("/availability", protectDoctor, updateAvailability);
 router.put("/leaves", protectDoctor, updateLeaves);

@@ -17,6 +17,7 @@ interface AuthContextValue {
     whyHere?: string, feelingToday?: string,
   ) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  doctorLogin: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -27,16 +28,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) { setLoading(false); return; }
     authApi.me()
       .then(({ user }) => setUser(user))
-      .catch(() => localStorage.removeItem("token"))
+      .catch(() => sessionStorage.removeItem("token"))
       .finally(() => setLoading(false));
   }, []);
 
   const handleAuth = (data: AuthResponse) => {
-    localStorage.setItem("token", data.token);
+    sessionStorage.setItem("token", data.token);
     setUser(data.user);
   };
 
@@ -54,13 +55,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     handleAuth(data);
   };
 
+  const doctorLogin = async (email: string, password: string) => {
+    const data = await authApi.doctorLogin(email, password);
+    handleAuth(data);
+  };
+
   const logout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, register, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, register, login, doctorLogin, logout }}>
       {children}
     </AuthContext.Provider>
   );

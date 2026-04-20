@@ -113,7 +113,7 @@ export default function MoodTracker() {
     try {
       const response = await fetch(`/api/mood/history?limit=${limit}&offset=${offset}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
       });
       const data = await response.json();
@@ -127,7 +127,7 @@ export default function MoodTracker() {
     try {
       const response = await fetch('/api/mood/analysis?days=30', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
       });
       const data = await response.json();
@@ -142,7 +142,7 @@ export default function MoodTracker() {
       setLoading(true);
       const response = await fetch(`/api/mood/weekly-report?weekOffset=${weekOffset}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
       });
       const data = await response.json();
@@ -159,7 +159,7 @@ export default function MoodTracker() {
     try {
       const response = await fetch('/api/mood/alerts', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
       });
       const data = await response.json();
@@ -181,7 +181,7 @@ export default function MoodTracker() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
         body: JSON.stringify({ mood: selectedMood, note }),
       });
@@ -211,7 +211,7 @@ export default function MoodTracker() {
       const response = await fetch(`/api/mood/alerts/${alertId}/resolve`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
       });
 

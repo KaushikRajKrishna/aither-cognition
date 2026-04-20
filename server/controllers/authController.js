@@ -44,7 +44,7 @@ export const register = async (req, res) => {
   }
 };
 
-// POST /api/auth/login  — checks User collection first, then Doctor
+// POST /api/auth/login  — patients only (User collection)
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -52,35 +52,41 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    // Try User first
-    let account = await User.findOne({ email });
-    if (account) {
-      if (!(await account.matchPassword(password))) {
-        return res.status(401).json({ message: "Invalid credentials" });
-      }
-      const token = signToken(account._id, account.role);
-      return res.json({ token, user: safeUser(account) });
+    const account = await User.findOne({ email });
+    if (!account || !(await account.matchPassword(password))) {
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Try Doctor
-    account = await Doctor.findOne({ email });
-    if (account) {
-      if (!(await account.matchPassword(password))) {
-        return res.status(401).json({ message: "Invalid credentials" });
-      }
-      const token = signToken(account._id, "doctor");
-      return res.json({
-        token,
-        user: {
-          id: account._id,
-          name: account.name,
-          email: account.email,
-          role: "doctor",
-        },
-      });
+    const token = signToken(account._id, account.role);
+    return res.json({ token, user: safeUser(account) });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// POST /api/doctor/login  — doctors only (Doctor collection)
+export const doctorLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
     }
 
-    return res.status(401).json({ message: "Invalid credentials" });
+    const account = await Doctor.findOne({ email });
+    if (!account || !(await account.matchPassword(password))) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = signToken(account._id, "doctor");
+    return res.json({
+      token,
+      user: {
+        id: account._id,
+        name: account.name,
+        email: account.email,
+        role: "doctor",
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
