@@ -43,8 +43,8 @@ const Index = () => {
       <HeroSection onRegisterClick={openRoleSelect} onLoginClick={openLoginRoleSelect} />
       <ChallengeSection />
       <FeaturesSection />
-      <ArchitectureSection />
-      <HowItWorksSection />
+      {/* <ArchitectureSection /> */}
+      {/* <HowItWorksSection /> */}
       <TechStackSection />
       <CTASection />
       <Footer />
