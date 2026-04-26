@@ -1,4 +1,4 @@
-const rawApiBaseUrl = (import.meta.env.VITE_API_URL ?? "http://localhost:5000").toString().trim();
+const rawApiBaseUrl = (import.meta.env.VITE_API_URL ?? "https://aither-cognition-production.up.railway.app").toString().trim();
 const normalizedApiBaseUrl = rawApiBaseUrl
   .replace(/\/api\/?$/, "")
   .replace(/\/+$/, "");
