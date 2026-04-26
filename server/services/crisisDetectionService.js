@@ -76,11 +76,10 @@ class CrisisDetectionService {
           "overdose",
           "overdosing",
           "too many pills",
-          "too much",
           "poison",
           "toxic",
         ],
-        phrases: ["took too many", "can't breathe", "dying", "help me"],
+        phrases: ["took too many", "took too much", "can't breathe", "dying", "help me"],
         severity: "critical",
       },
       hopelessness: {

@@ -146,13 +146,11 @@ class EmotionDetectionService {
         keywords: [
           "overwhelmed",
           "overloaded",
-          "too much",
           "drowning",
           "sinking",
           "breaking",
         ],
         phrases: [
-          "too much",
           "can't handle",
           "falling apart",
           "breaking down",

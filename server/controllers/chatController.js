@@ -1,9 +1,11 @@
 ﻿import { knowledgeBase } from "../data/knowledgeBase.js";
 import ChatMessage from "../models/ChatMessage.js";
+import User from "../models/User.js";
 import emotionDetectionService from "../services/emotionDetectionService.js";
 import crisisDetectionService from "../services/crisisDetectionService.js";
 import safetyFilteringService from "../services/safetyFilteringService.js";
 import promptConstructionService from "../services/promptConstructionService.js";
+import { sendCrisisAlertEmail } from "../services/emailService.js";
 
 // ── 1. Knowledge-base search ──────────────────────────────────────────────────
 function searchKB(query) {
@@ -79,18 +81,28 @@ export async function callGemini(systemPrompt, messages) {
 }
 
 // ── 3. KB-only fallback (no API key) ─────────────────────────────────────────
-function kbFallback(message, relevant) {
-  const topicLabel = /mom|mother|mum/i.test(message) ? "your mom" : "someone close to you";
-  const opening = `I'm really sorry to hear that. Fights with ${topicLabel} can feel especially heavy because those are often the people we care about most.`;
-  const followUp = `How are you feeling after the argument? If you want to talk through what happened, I'm here to listen.`;
+function kbFallback(message, relevant, emotionResult) {
+  // Generate context-aware opening based on detected emotion
+  const emotionResponses = {
+    sadness: "I'm sorry you're feeling sad right now. That's a really valid emotion, and it's okay to feel it.",
+    anxiety: "I understand that something is making you feel anxious or worried. Let's talk about what's on your mind.",
+    anger: "It sounds like you're frustrated or upset about something. Those feelings are valid, and I'm here to listen.",
+    joy: "That's wonderful to hear! I'm happy you're experiencing positive feelings.",
+    overwhelm: "It sounds like you might be feeling overwhelmed right now. Let's break this down together.",
+    grief: "I'm truly sorry for what you're going through. Loss is incredibly difficult.",
+    neutral: "Thank you for sharing with me. I'm here to listen and support you.",
+    default: "Thank you for sharing. I'm here to help you navigate what you're feeling."
+  };
 
+  const opening = emotionResponses[emotionResult?.primary] || emotionResponses.default;
+  
   if (relevant.length === 0) {
-    return `${opening}\n\nSometimes taking a little space and checking in with yourself can help before you decide what to say next. ${followUp}\n\n*Note: I'm an AI support assistant — not a replacement for professional mental health care. If you're in crisis, please contact a helpline immediately.*`;
+    return `${opening}\n\nWhile I don't have specific guidance on this topic right now, please know that reaching out and talking about your feelings is already a positive step. Consider speaking with a trusted friend, family member, or mental health professional who can provide more personalized support.\n\n*Note: I'm an AI support assistant — not a replacement for professional mental health care. If you're in crisis, please contact a helpline immediately.*`;
   }
 
   const top = relevant[0];
-  return `${opening}\n\nFrom what you've shared, this feels related to ${top.topic}. ${top.content}\n\n${followUp}\n\n---\n*For personalised support, speaking with a mental health professional is always recommended. In a crisis, please call a helpline right away.*`;
-}
+  return `${opening}\n\nFrom what you've shared, this feels related to ${top.topic}:\n\n${top.content}\n\nI'm here to listen and support you. How are you feeling right now?\n\n---\n*For personalised support, speaking with a mental health professional is always recommended. In a crisis, please call a helpline right away.*`;
+  }
 
 // ── POST /api/chat ────────────────────────────────────────────────────────────
 export const chat = async (req, res) => {
@@ -129,6 +141,19 @@ export const chat = async (req, res) => {
     let crisisOverride = null;
     if (riskLevel === "critical") {
       crisisOverride = crisisDetectionService.getCrisisResponse(riskLevel);
+    }
+
+    // Send email alert for high or critical risk
+    if ((riskLevel === "high" || riskLevel === "critical") && userId) {
+      try {
+        const user = await User.findById(userId);
+        if (user && user.email) {
+          await sendCrisisAlertEmail(user.email, user.name, riskLevel, crisisResult.flags);
+          console.log("[chat] Crisis alert email sent to:", user.email);
+        }
+      } catch (emailErr) {
+        console.warn("[chat] Failed to send crisis alert email:", emailErr.message);
+      }
     }
 
     // ────────────────────────────────────────────────────────────────
@@ -209,12 +234,12 @@ export const chat = async (req, res) => {
       } catch (err) {
         console.error("[chat] Gemini API failed:", err.message);
         console.warn("[chat] Falling back to knowledge base answer due to Gemini error");
-        reply = kbFallback(message, relevant);
+        reply = kbFallback(message, relevant, emotionResult);
       }
     } else {
       // Fallback to KB when no API key is configured
       console.warn("[chat] GEMINI_API_KEY not set — using KB fallback");
-      reply = kbFallback(message, relevant);
+      reply = kbFallback(message, relevant, emotionResult);
     }
 
     // ────────────────────────────────────────────────────────────────
