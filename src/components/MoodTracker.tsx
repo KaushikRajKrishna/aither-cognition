@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE = `${API_BASE_URL}/api`;
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -111,7 +114,7 @@ export default function MoodTracker() {
 
   const fetchMoodHistory = async (limit = 10, offset = 0) => {
     try {
-      const response = await fetch(`/api/mood/history?limit=${limit}&offset=${offset}`, {
+      const response = await fetch(`${API_BASE}/mood/history?limit=${limit}&offset=${offset}`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
@@ -125,7 +128,7 @@ export default function MoodTracker() {
 
   const fetchAnalysis = async () => {
     try {
-      const response = await fetch('/api/mood/analysis?days=30', {
+      const response = await fetch(`${API_BASE}/mood/analysis?days=30`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
@@ -140,7 +143,7 @@ export default function MoodTracker() {
   const fetchWeeklyReport = async (weekOffset = 0) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/mood/weekly-report?weekOffset=${weekOffset}`, {
+      const response = await fetch(`${API_BASE}/mood/weekly-report?weekOffset=${weekOffset}`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
@@ -157,7 +160,7 @@ export default function MoodTracker() {
 
   const fetchAlerts = async () => {
     try {
-      const response = await fetch('/api/mood/alerts', {
+      const response = await fetch(`${API_BASE}/mood/alerts`, {
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
         },
@@ -177,7 +180,7 @@ export default function MoodTracker() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch('/api/mood/add', {
+      const response = await fetch(`${API_BASE}/mood/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -208,7 +211,7 @@ export default function MoodTracker() {
 
   const resolveAlert = async (alertId: string) => {
     try {
-      const response = await fetch(`/api/mood/alerts/${alertId}/resolve`, {
+      const response = await fetch(`${API_BASE}/mood/alerts/${alertId}/resolve`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${sessionStorage.getItem('token')}`,

@@ -1,4 +1,11 @@
-const BASE = "/api";
+const rawApiBaseUrl = (import.meta.env.VITE_API_URL ?? "http://localhost:5000").toString().trim();
+const normalizedApiBaseUrl = rawApiBaseUrl
+  .replace(/\/api\/?$/, "")
+  .replace(/\/+$/, "");
+export const API_BASE_URL = normalizedApiBaseUrl.match(/^https?:\/\//)
+  ? normalizedApiBaseUrl
+  : `https://${normalizedApiBaseUrl}`;
+export const BASE = `${API_BASE_URL}/api`;
 
 function getToken() {
   return sessionStorage.getItem("token");
