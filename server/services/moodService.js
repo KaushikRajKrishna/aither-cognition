@@ -35,6 +35,67 @@ class MoodService {
     return "sad";
   }
 
+  // Convert chat emotion into a mood type for mood tracking
+  static mapChatEmotionToMood(primaryEmotion, sentimentScore = 0) {
+    if (primaryEmotion === "joy") return "happy";
+    if (primaryEmotion === "neutral") return "neutral";
+    if (["sadness", "grief"].includes(primaryEmotion)) return "sad";
+    if (["anxiety", "anger", "fear", "overwhelm", "loneliness"].includes(primaryEmotion)) return "stressed";
+    if (["disgust", "surprise"].includes(primaryEmotion)) {
+      return sentimentScore >= 0 ? "calm" : "stressed";
+    }
+
+    return this.detectMoodFromSentiment(sentimentScore);
+  }
+
+  static async addMoodEntryFromChat(userId, note, emotionResult) {
+    try {
+      if (!note || !note.trim()) {
+        return null;
+      }
+
+      const sentimentScore = typeof emotionResult?.sentimentScore === "number"
+        ? emotionResult.sentimentScore
+        : this.analyzeSentiment(note).comparative;
+
+      const mood = this.mapChatEmotionToMood(emotionResult?.primary, sentimentScore);
+      if (!mood) {
+        return null;
+      }
+
+      const moodScore = this.MOOD_SCORES[mood];
+      const moodEntry = new MoodEntry({
+        moodId: uuidv4(),
+        userId,
+        mood,
+        moodScore,
+        note,
+        detectedMood: mood,
+        sentimentScore,
+      });
+
+      await moodEntry.save();
+
+      await User.findByIdAndUpdate(userId, {
+        $inc: { totalMoodEntries: 1 },
+        $set: { lastMoodEntry: new Date() },
+      });
+
+      await this.publishEvent("CHAT_MOOD_LOGGED", userId, {
+        moodId: moodEntry.moodId,
+        mood,
+        moodScore,
+        sentimentScore,
+        detectedMood: mood,
+      });
+
+      await this.checkForAlerts(userId);
+      return moodEntry;
+    } catch (error) {
+      throw new Error(`Failed to add chat mood entry: ${error.message}`);
+    }
+  }
+
   // Add mood entry with analysis
   static async addMoodEntry(userId, mood, note = "") {
     try {

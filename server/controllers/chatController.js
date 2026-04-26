@@ -1,6 +1,7 @@
 ﻿import { knowledgeBase } from "../data/knowledgeBase.js";
 import ChatMessage from "../models/ChatMessage.js";
 import User from "../models/User.js";
+import MoodService from "../services/moodService.js";
 import emotionDetectionService from "../services/emotionDetectionService.js";
 import crisisDetectionService from "../services/crisisDetectionService.js";
 import safetyFilteringService from "../services/safetyFilteringService.js";
@@ -180,6 +181,16 @@ export const chat = async (req, res) => {
       });
     } catch (dbErr) {
       console.warn("[chat] Could not save user message:", dbErr.message);
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    // STEP 3.1: Add corresponding mood entry from chat sentiment
+    // ────────────────────────────────────────────────────────────────
+    try {
+      await MoodService.addMoodEntryFromChat(userId, message, emotionResult);
+      console.log("[chat] Added mood entry from chat sentiment");
+    } catch (moodErr) {
+      console.warn("[chat] Could not add mood entry from chat sentiment:", moodErr.message);
     }
 
     // ────────────────────────────────────────────────────────────────
