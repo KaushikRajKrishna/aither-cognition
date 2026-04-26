@@ -125,7 +125,7 @@ export default function HeroSection({ onRegisterClick, onLoginClick }: HeroProps
             loop
             muted
             playsInline
-            className="h-[320px] w-[125%] -translate-x-[5%] object-cover object-center md:h-[380px] lg:h-[440px]"
+            className="h-[320px] w-full object-cover object-center md:h-[380px] lg:h-[440px]"
           />
         </motion.div>
       </div>

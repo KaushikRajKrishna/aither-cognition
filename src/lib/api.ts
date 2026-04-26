@@ -56,13 +56,85 @@ export interface ChatMessage {
 export interface ChatResponse {
   reply: string;
   contextUsed: string[];
+  sessionId: string;
+  metadata?: {
+    emotion: {
+      primary: string;
+      secondary: string[];
+      confidence: number;
+      sentimentScore: number;
+    };
+    riskLevel: string;
+    crisisFlags: string[];
+    safetyFiltered: boolean;
+    conversationPhase: string;
+  };
 }
 
 export const chatApi = {
-  send: (message: string, history: ChatMessage[]) =>
+  send: (message: string, history: ChatMessage[], sessionId?: string) =>
     request<ChatResponse>("/chat", {
       method: "POST",
-      body: JSON.stringify({ message, history }),
+      body: JSON.stringify({ message, history, sessionId }),
+    }),
+
+  // Fetch chat history for a session or user
+  getHistory: (userId: string, sessionId?: string, limit = 50, offset = 0) => {
+    let url = `/chat-history/${userId}/history?limit=${limit}&offset=${offset}`;
+    if (sessionId) url += `&sessionId=${sessionId}`;
+    return request<{
+      messages: any[];
+      pagination: { total: number; limit: number; offset: number; hasMore: boolean };
+    }>(url);
+  },
+
+  // Get conversation statistics
+  getStats: (userId: string) =>
+    request<{
+      stats: {
+        totalMessages: number;
+        userMessages: number;
+        assistantMessages: number;
+        uniqueSessions: number;
+        averageEmotionScore: number;
+        highestRiskCount: number;
+      };
+    }>(`/chat-history/${userId}/stats`),
+
+  // Get full conversation transcript
+  getTranscript: (sessionId: string, userId: string) =>
+    request<{
+      transcript: any[];
+      summary: {
+        sessionId: string;
+        startedAt: string;
+        endedAt: string;
+        messageCount: number;
+        emotions: string[];
+        riskLevels: string[];
+        highestRisk: string;
+      };
+    }>(`/chat-history/${sessionId}/transcript?userId=${userId}`),
+
+  // Export conversation as JSON
+  exportConversation: (sessionId: string, userId: string) =>
+    request<any>(`/chat-history/${sessionId}/export?userId=${userId}`),
+
+  // Admin: Get flagged high-risk messages
+  getFlaggedMessages: (riskLevel = "high", limit = 50, offset = 0, resolved?: boolean) => {
+    let url = `/chat-history/admin/flagged-messages?riskLevel=${riskLevel}&limit=${limit}&offset=${offset}`;
+    if (resolved !== undefined) url += `&resolved=${resolved}`;
+    return request<{
+      flaggedMessages: any[];
+      pagination: { total: number; limit: number; offset: number; hasMore: boolean };
+    }>(url);
+  },
+
+  // Admin: Mark message as reviewed
+  markAsReviewed: (messageId: string, action: string, notes?: string) =>
+    request<{ message: string; data: any }>(`/chat-history/${messageId}/review`, {
+      method: "POST",
+      body: JSON.stringify({ action, notes }),
     }),
 };
 

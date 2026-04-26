@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.js";
 import moodRoutes from "./routes/mood.js";
 import moodAdminRoutes from "./routes/moodAdmin.js";
 import chatRoutes from "./routes/chat.js";
+import chatHistoryRoutes from "./routes/chatHistory.js";
 import doctorRoutes from "./routes/doctor.js";
 import appointmentRoutes from "./routes/appointment.js";
 import notificationRoutes from "./routes/notification.js";
@@ -41,6 +42,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/mood", moodRoutes);
 app.use("/api/mood-admin", moodAdminRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/chat-history", chatHistoryRoutes);
 // GET /api/doctor registered directly — Express 5 subrouters don't match empty
 // suffix paths reliably, so the list route lives here instead of the subrouter
 app.get("/api/doctor", getAllDoctors);

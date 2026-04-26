@@ -1,10 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Bot, User, Loader2 } from "lucide-react";
+import { X, Send, Bot, User, Loader2, AlertCircle } from "lucide-react";
 import { chatApi, ChatMessage } from "@/lib/api";
 
 interface ChatBotProps {
   onClose: () => void;
+}
+
+interface MessageWithMetadata extends ChatMessage {
+  metadata?: {
+    emotion?: { primary: string; confidence: number };
+    riskLevel?: string;
+  };
 }
 
 const WELCOME: ChatMessage = {
@@ -14,10 +21,11 @@ const WELCOME: ChatMessage = {
 };
 
 export default function ChatBot({ onClose }: ChatBotProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([WELCOME]);
+  const [messages, setMessages] = useState<MessageWithMetadata[]>([WELCOME]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [sessionId, setSessionId] = useState<string>(() => `session_${Date.now()}`);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -35,7 +43,7 @@ export default function ChatBot({ onClose }: ChatBotProps) {
     const text = input.trim();
     if (!text || loading) return;
 
-    const userMsg: ChatMessage = { role: "user", content: text };
+    const userMsg: MessageWithMetadata = { role: "user", content: text };
     const history = messages.filter((m) => m.role !== "assistant" || m !== WELCOME);
 
     setMessages((prev) => [...prev, userMsg]);
@@ -44,8 +52,28 @@ export default function ChatBot({ onClose }: ChatBotProps) {
     setLoading(true);
 
     try {
-      const { reply } = await chatApi.send(text, [...history, userMsg]);
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      const response = await chatApi.send(text, [...history, userMsg], sessionId);
+      const { reply, metadata } = response;
+
+      // Track if there's a crisis risk
+      const hasCrisisRisk = metadata?.riskLevel === "critical" || metadata?.riskLevel === "high";
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: reply,
+          metadata: {
+            emotion: metadata?.emotion,
+            riskLevel: metadata?.riskLevel,
+          },
+        },
+      ]);
+
+      // If crisis detected, show visual warning
+      if (hasCrisisRisk) {
+        console.warn(`[ChatBot] Crisis risk detected: ${metadata?.riskLevel}`);
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Something went wrong.";
       setError(msg);
@@ -61,6 +89,11 @@ export default function ChatBot({ onClose }: ChatBotProps) {
     }
   }
 
+  // Check if any message has crisis risk
+  const hasCrisisContent = messages.some(
+    (m) => m.metadata?.riskLevel === "critical" || m.metadata?.riskLevel === "high"
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -74,11 +107,15 @@ export default function ChatBot({ onClose }: ChatBotProps) {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 40, scale: 0.95 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="flex flex-col w-full max-w-lg h-[85vh] max-h-[700px] glass-card border border-glass-border rounded-2xl overflow-hidden shadow-2xl"
+        className={`flex flex-col w-full max-w-lg h-[85vh] max-h-[700px] glass-card border rounded-2xl overflow-hidden shadow-2xl ${
+          hasCrisisContent ? "border-destructive/50" : "border-glass-border"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-glass-border bg-card/80">
+        <div className={`flex items-center gap-3 px-4 py-3 border-b bg-card/80 ${
+          hasCrisisContent ? "border-destructive/30" : "border-glass-border"
+        }`}>
           <div className="flex items-center justify-center w-9 h-9 rounded-full bg-primary/20">
             <Bot className="h-5 w-5 text-primary" />
           </div>
@@ -86,6 +123,12 @@ export default function ChatBot({ onClose }: ChatBotProps) {
             <p className="font-semibold text-sm">Aither</p>
             <p className="text-xs text-muted-foreground">Mental Health Support</p>
           </div>
+          {hasCrisisContent && (
+            <div className="flex items-center gap-1 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded">
+              <AlertCircle className="h-3 w-3" />
+              <span>Crisis Support Active</span>
+            </div>
+          )}
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-foreground"
@@ -126,10 +169,21 @@ export default function ChatBot({ onClose }: ChatBotProps) {
                   className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
                     msg.role === "user"
                       ? "bg-primary text-primary-foreground rounded-tr-sm"
-                      : "bg-secondary/60 text-foreground rounded-tl-sm border border-glass-border"
+                      : `rounded-tl-sm border ${
+                          msg.metadata?.riskLevel === "critical"
+                            ? "bg-destructive/10 border-destructive/30"
+                            : msg.metadata?.riskLevel === "high"
+                              ? "bg-orange-500/10 border-orange-500/30"
+                              : "bg-secondary/60 border-glass-border"
+                        } text-foreground`
                   }`}
                 >
                   {msg.content}
+                  {msg.metadata?.emotion && (
+                    <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-current border-opacity-20">
+                      Emotion: {msg.metadata.emotion.primary} ({Math.round(msg.metadata.emotion.confidence * 100)}% confidence)
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -160,7 +214,9 @@ export default function ChatBot({ onClose }: ChatBotProps) {
         </div>
 
         {/* Input area */}
-        <div className="border-t border-glass-border px-4 py-3 bg-card/60">
+        <div className={`border-t px-4 py-3 bg-card/60 ${
+          hasCrisisContent ? "border-destructive/30" : "border-glass-border"
+        }`}>
           <div className="flex items-end gap-2">
             <textarea
               ref={inputRef}

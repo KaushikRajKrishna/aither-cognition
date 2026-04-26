@@ -121,3 +121,35 @@ export async function sendMoodAlertEmail(to, userName, alertType, message) {
   `);
   await sendEmail(to, subject, html);
 }
+
+export async function sendCrisisAlertEmail(to, userName, riskLevel, detectedPatterns) {
+  const subject = "🆘 Crisis Alert – Immediate Support Available – Aither Cognition";
+  const riskColor = riskLevel === "critical" ? "#dc2626" : "#ea580c";
+  const helplineInfo = `
+    <p><strong>📞 National Suicide Prevention Lifeline (US):</strong> Call <strong>988</strong></p>
+    <p><strong>📱 Text:</strong> Text HOME to 741741</p>
+    <p><strong>🌐 Website:</strong> <a href="https://988lifeline.org/" style="color:#4f46e5">988lifeline.org</a></p>
+  `;
+  
+  const html = baseLayout(`
+    <p>Hi <strong>${userName || "there"}</strong>,</p>
+    <p>We've detected a <strong style="color:${riskColor}">${riskLevel === "critical" ? "critical" : "high-risk"} situation</strong> in your recent conversation on Aither Cognition.</p>
+    <div class="card" style="border-left-color:${riskColor}; background: #fef2f2;">
+      <p><strong>🆘 Immediate Support Available</strong></p>
+      <p style="margin-top:12px; color:#991b1b"><strong>Please reach out for professional help right now:</strong></p>
+      ${helplineInfo}
+    </div>
+    <p style="margin-top:20px"><strong>Other resources:</strong></p>
+    <p>
+      🇨🇦 <strong>Canada:</strong> 1-833-456-4566<br/>
+      🇬🇧 <strong>UK:</strong> 116 123 (Samaritans)<br/>
+      🇦🇺 <strong>Australia:</strong> 13 11 14 (Lifeline)<br/>
+      🇮🇳 <strong>India:</strong> iCall 9152987821
+    </p>
+    <p style="margin-top:20px">You matter. Your life matters. Help is available right now. Please reach out to someone you trust or contact a crisis helpline immediately.</p>
+    <p style="margin-top:20px">If you're in immediate danger, please call <strong>911</strong> (or your local emergency number).</p>
+    <p style="margin-top:20px">We care about your wellbeing.<br/><strong>The Aither Cognition Team</strong></p>
+  `);
+  
+  await sendEmail(to, subject, html);
+}

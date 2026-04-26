@@ -73,6 +73,16 @@ Healthy ways to grieve:
 Complicated or prolonged grief can benefit from grief counseling or therapy.`,
   },
   {
+    topic: "sadness and emotional pain",
+    keywords: ["sad", "sadness", "upset", "hurt", "heartache", "down", "feeling down", "blue", "emotional pain", "sorrow"],
+    content: `Sadness is a natural human emotion. It's important to acknowledge and process what you're feeling.\nCommon triggers: conflicts with loved ones, disappointments, unmet expectations, losses.\nHealthy ways to process sadness:\n- Allow yourself to feel without judgment\n- Talk to someone you trust\n- Express emotions through journaling, art, or music\n- Spend time in nature or doing calming activities\n- Practice self-compassion\n- Maintain basic self-care (sleep, nutrition, hygiene)\n- Consider professional support if sadness persists\nRemember: sadness is temporary, and this too shall pass.`,
+  },
+  {
+    topic: "friendship and social relationships",
+    keywords: ["friend", "friendship", "friends", "scold", "scolded", "jealous", "jealousy", "excluded", "alone", "social", "peer", "best friend", "betrayed by friend"],
+    content: `Friendships are important for our wellbeing, and friend-related issues can feel deeply personal.\nCommon friendship challenges:\n- Feeling hurt by criticism from a friend\n- Jealousy when friends spend time with others\n- Feeling excluded or left out\n- Misunderstandings or miscommunications\nHow to navigate friendship challenges:\n- Communicate openly and honestly about your feelings\n- Listen to their perspective without getting defensive\n- Give yourself space if you need it\n- Remember that friends can have other friendships too\n- Set healthy boundaries\n- Choose friends who respect and value you\n- Talk to a trusted person about what you're feeling\nIt's okay to feel hurt — your feelings matter. Strong friendships involve working through conflicts together.`,
+  },
+  {
     topic: "relationships",
     keywords: ["relationship", "breakup", "partner", "lonely", "loneliness", "conflict", "fight", "divorce", "toxic", "abusive", "trust", "betrayal"],
     content: `Healthy relationships are built on mutual respect, trust, open communication, and support.
