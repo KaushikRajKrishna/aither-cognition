@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-const navLinks = ["Home", "Features", "Architecture", "How It Works", "Technology", "About", "Contact"];
+const navLinks = ["Home", "Features", "Technology", "About", "Contact"];
 
 interface NavbarProps {
   onLoginClick?: () => void;

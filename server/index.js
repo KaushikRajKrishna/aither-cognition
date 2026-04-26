@@ -19,8 +19,20 @@ import NotificationService from "./services/notificationService.js";
 
 const app = express();
 
+// CORS configuration
+const allowedOrigins = [
+  "http://localhost:8080",
+  "http://localhost:8081",
+  "http://localhost:5173", // Vite default dev port
+];
+
+// Add production URLs from environment variable if present
+if (process.env.ALLOWED_ORIGINS) {
+  allowedOrigins.push(...process.env.ALLOWED_ORIGINS.split(","));
+}
+
 // Middleware
-app.use(cors({ origin: ["http://localhost:8080", "http://localhost:8081"], credentials: true }));
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 
 // Routes
