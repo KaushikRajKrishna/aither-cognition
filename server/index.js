@@ -26,6 +26,7 @@ const allowedOrigins = [
   "http://localhost:8080",
   "http://localhost:8081",
   "http://localhost:5173", // Vite default dev port
+  "https://aither-cognition.vercel.app", // Vercel production frontend
 ];
 
 // Add production URLs from environment variable if present
