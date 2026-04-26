@@ -153,3 +153,5 @@ export async function sendCrisisAlertEmail(to, userName, riskLevel, detectedPatt
   
   await sendEmail(to, subject, html);
 }
+
+export { sendEmail };

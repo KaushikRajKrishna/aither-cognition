@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-const navLinks = ["Home", "Features", "Technology", "About", "Contact"];
+const navLinks = ["Home", "About", "Contact"];
 
 interface NavbarProps {
   onLoginClick?: () => void;
@@ -31,8 +31,8 @@ export default function Navbar({ onLoginClick, onRegisterClick }: NavbarProps) {
       <div className="container mx-auto flex items-center justify-between px-4 py-4">
         {/* Logo */}
         <a href="#" className="font-display text-xl font-bold tracking-wider">
-          <span className="gradient-text">Mind</span>
-          <span className="text-foreground">Tech</span>
+          <span className="gradient-text">Aither</span>
+          <span className="text-foreground">Cognition</span>
         </a>
 
         {/* Desktop links */}

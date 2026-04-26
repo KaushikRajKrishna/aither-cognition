@@ -12,6 +12,7 @@ import doctorRoutes from "./routes/doctor.js";
 import appointmentRoutes from "./routes/appointment.js";
 import notificationRoutes from "./routes/notification.js";
 import routineRoutes from "./routes/routine.js";
+import feedbackRoutes from "./routes/feedback.js";
 import { getAllDoctors } from "./controllers/doctorController.js";
 import Appointment from "./models/Appointment.js";
 import Alert from "./models/Alert.js";
@@ -49,6 +50,7 @@ app.use("/api/doctor", doctorRoutes);
 app.use("/api/appointment", appointmentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/routine", routineRoutes);
+app.use("/api/feedback", feedbackRoutes);
 
 // Health check
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
