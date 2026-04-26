@@ -1,5 +1,5 @@
 const footerLinks = {
-  Platform: ["Features", "Architecture", "Technology"],
+  Platform: ["Architecture"],
   Resources: ["Documentation", "API Reference", "Community"],
   Contact: ["Support", "Feedback", "Partnerships"],
 };
@@ -39,7 +39,7 @@ export default function Footer() {
 
         <div className="mt-10 border-t border-glass-border pt-6 text-center">
           <p className="text-xs text-muted-foreground">
-            © 2026 MindTech – AI Powered Mental Health Support Platform. All rights reserved.
+            © 2026 Aither Cognition – AI Powered Mental Health Support Platform. All rights reserved.
           </p>
         </div>
       </div>

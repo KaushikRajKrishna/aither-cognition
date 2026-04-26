@@ -48,9 +48,6 @@ export default function CTASection() {
               Register Now
             </button>
           )}
-          <button className="glow-button-outline font-display text-sm font-semibold tracking-wider">
-            Explore Platform
-          </button>
         </div>
       </motion.div>
     </section>

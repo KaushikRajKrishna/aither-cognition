@@ -38,7 +38,7 @@ export default function LoginRoleSelectModal({ open, onClose, onPatient, onDocto
               <User2 className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <p className="font-display font-bold text-foreground">Patient</p>
+              <p className="font-display font-bold text-foreground">User</p>
               <p className="text-xs text-muted-foreground mt-0.5">User account</p>
             </div>
           </motion.button>

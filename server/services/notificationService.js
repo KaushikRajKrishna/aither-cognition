@@ -1,4 +1,4 @@
-import webpush from "web-push";
+ import webpush from "web-push";
 import PushSubscription from "../models/PushSubscription.js";
 import User from "../models/User.js";
 import {

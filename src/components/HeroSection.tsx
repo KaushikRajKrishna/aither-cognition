@@ -87,32 +87,10 @@ export default function HeroSection({ onRegisterClick, onLoginClick }: HeroProps
                 </button>
               </>
             )}
-            <button className="glow-button-outline font-display text-sm font-semibold tracking-wider">
-              Explore Platform
-            </button>
           </motion.div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="mt-12 flex justify-center gap-8 lg:justify-start"
-          >
-            {[
-              ["10K+", "Active Users"],
-              ["98%", "Satisfaction"],
-              ["24/7", "AI Support"],
-            ].map(([value, label]) => (
-              <div key={label} className="text-center">
-                <p className="font-display text-2xl font-bold text-primary">{value}</p>
-                <p className="text-xs text-muted-foreground">{label}</p>
-              </div>
-            ))}
-          </motion.div>
+          {/* Hero Video */}
         </div>
-
-        {/* Hero Video */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

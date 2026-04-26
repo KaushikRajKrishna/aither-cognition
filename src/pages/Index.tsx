@@ -4,11 +4,8 @@ import Navbar from "@/components/Navbar";
 import Dashboard from "@/components/Dashboard";
 import HeroSection from "@/components/HeroSection";
 import ChallengeSection from "@/components/ChallengeSection";
-import FeaturesSection from "@/components/FeaturesSection";
-import ArchitectureSection from "@/components/ArchitectureSection";
-import HowItWorksSection from "@/components/HowItWorksSection";
-import TechStackSection from "@/components/TechStackSection";
-import CTASection from "@/components/CTASection";
+import AboutSection from "@/components/AboutSection";
+import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import LoginModal from "@/components/LoginModal";
 import RegisterModal from "@/components/RegisterModal";
@@ -42,11 +39,10 @@ const Index = () => {
       <Navbar onLoginClick={openLoginRoleSelect} onRegisterClick={openRoleSelect} />
       <HeroSection onRegisterClick={openRoleSelect} onLoginClick={openLoginRoleSelect} />
       <ChallengeSection />
-      <FeaturesSection />
+      <AboutSection />
+      <ContactSection />
       {/* <ArchitectureSection /> */}
       {/* <HowItWorksSection /> */}
-      <TechStackSection />
-      <CTASection />
       <Footer />
 
       {/* Role selection – appears first on "Register Now" */}

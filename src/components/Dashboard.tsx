@@ -72,7 +72,7 @@ export default function Dashboard() {
                 </div>
               )}
               <div className="font-display text-lg font-bold gradient-text">
-                Mind<span className="text-sidebar-foreground">Tech</span>
+                Aither<span className="text-sidebar-foreground">Cognition</span>
               </div>
             </div>
             {isDoctor && (
