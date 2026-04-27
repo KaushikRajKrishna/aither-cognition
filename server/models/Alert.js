@@ -14,7 +14,7 @@ const alertSchema = new mongoose.Schema(
     },
     alertType: {
       type: String,
-      enum: ["HIGH_STRESS_ALERT", "LOW_MOOD_ALERT"],
+      enum: ["HIGH_STRESS_ALERT", "LOW_MOOD_ALERT", "CRITICAL_CRISIS_ALERT", "HIGH_RISK_ALERT"],
       required: true,
     },
     message: {

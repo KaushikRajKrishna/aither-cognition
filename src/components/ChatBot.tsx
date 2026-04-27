@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Bot, User, Loader2, AlertCircle } from "lucide-react";
+import { X, Send, Bot, User, Loader2, AlertCircle, AlertTriangle } from "lucide-react";
 import { chatApi, ChatMessage } from "@/lib/api";
 
 interface ChatBotProps {
@@ -137,6 +137,25 @@ export default function ChatBot({ onClose }: ChatBotProps) {
             <X className="h-4 w-4" />
           </button>
         </div>
+
+        {/* Crisis Alert Banner */}
+        {hasCrisisContent && (
+          <div className="bg-destructive/10 border-b border-destructive/30 px-4 py-3">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+              <div className="text-sm">
+                <p className="font-semibold text-destructive">Your safety matters</p>
+                <p className="text-destructive/80 mt-1">
+                  If you're in crisis, please reach out for immediate help:
+                </p>
+                <div className="mt-2 space-y-1 text-xs">
+                  <p><span className="font-medium">📞 US:</span> Call 988 or text HOME to 741741</p>
+                  <p><span className="font-medium">🌐 Global:</span> <a href="https://www.iasp.info/resources/Crisis_Centres/" target="_blank" rel="noopener noreferrer" className="underline hover:text-destructive/80">Find a crisis center</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
