@@ -1,11 +1,13 @@
 ﻿import { knowledgeBase } from "../data/knowledgeBase.js";
 import ChatMessage from "../models/ChatMessage.js";
 import User from "../models/User.js";
+import Alert from "../models/Alert.js";
 import MoodService from "../services/moodService.js";
 import emotionDetectionService from "../services/emotionDetectionService.js";
 import crisisDetectionService from "../services/crisisDetectionService.js";
 import safetyFilteringService from "../services/safetyFilteringService.js";
 import promptConstructionService from "../services/promptConstructionService.js";
+import NotificationService from "../services/notificationService.js";
 import { sendCrisisAlertEmail } from "../services/emailService.js";
 
 // ── 1. Knowledge-base search ──────────────────────────────────────────────────
@@ -148,12 +150,46 @@ export const chat = async (req, res) => {
     if ((riskLevel === "high" || riskLevel === "critical") && userId) {
       try {
         const user = await User.findById(userId);
+        
+        // 1. Send email alert
         if (user && user.email) {
           await sendCrisisAlertEmail(user.email, user.name, riskLevel, crisisResult.flags);
           console.log("[chat] Crisis alert email sent to:", user.email);
         }
+        
+        // 2. Send push notification
+        try {
+          await NotificationService.sendToUser(userId, {
+            title: "🆘 Crisis Alert",
+            body: riskLevel === "critical" 
+              ? "We detected a crisis in your message. Please reach out for help immediately. Call 988 or text HOME to 741741."
+              : "We noticed you may be going through a difficult time. Please consider reaching out for support.",
+            icon: "/favicon.ico",
+            tag: "crisis-alert",
+            requireInteraction: true,
+          });
+          console.log("[chat] Crisis push notification sent to user:", userId);
+        } catch (pushErr) {
+          console.warn("[chat] Failed to send crisis push notification:", pushErr.message);
+        }
+        
+        // 3. Save crisis alert to database
+        try {
+          const alertId = `CRISIS_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          await Alert.create({
+            alertId,
+            userId,
+            alertType: riskLevel === "critical" ? "CRITICAL_CRISIS_ALERT" : "HIGH_STRESS_ALERT",
+            message: `Crisis detected: ${riskLevel} risk. Flags: ${crisisResult.flags.join(", ")}`,
+            resolved: false,
+          });
+          console.log("[chat] Crisis alert saved to database:", alertId);
+        } catch (alertErr) {
+          console.warn("[chat] Failed to save crisis alert:", alertErr.message);
+        }
+        
       } catch (emailErr) {
-        console.warn("[chat] Failed to send crisis alert email:", emailErr.message);
+        console.warn("[chat] Failed to send crisis alert:", emailErr.message);
       }
     }
 
